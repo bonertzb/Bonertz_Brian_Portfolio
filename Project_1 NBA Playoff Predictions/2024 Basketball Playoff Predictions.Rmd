@@ -1,0 +1,314 @@
+---
+title: "Final Project Step 1_2_3"
+author: "Brian Bonertz"
+date: '2023-05-10'
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+## Final Project Step 1
+
+# Introduction
+# Identify a topic or a problem that you want to research.  Provide an introduction that explains the problem statement or topic you are addressing. Why would someone be interested in this?  How is it a data science problem?
+
+The topic I selected is to research data from the National Basketball League to playoff predictions for the top teams in 2024. I chose this data because the stats are relatively up to date and the knowledge may be useful for any sports enthusiast to actively assess their team performance for the upcoming year. I believe this to be a good data science topic because of the numerous variables that affect the winning percentage of the team. Individual player statistics, game location, injury reports, player salary, etc my all provide valuable insight on what type of predictors can influence the outcome of the game or season winning percentage. 
+
+# Research questions
+# Draft 5-10 Research questions that focus on the problem statement/topic.
+
+1) Examine player salary data. Do teams supplementing higher salaries for their players have a better winning percentage or better chance of winning?
+2) Examine historical data. What basketball statistics correlate best with winning percentage?
+3) View injury data. How does injuries influence the outcome of the game / season?
+4) Location. What teams have a better chance of winning at home vs on away games?
+5) Coaching. Do coaches groom better basketball seasons or have a better strategy for winning percentage or season outcomes?
+6) Season trends. Are there seasonal fluctuation in team performance throughout the season? Example: do teams perform better later in the season or during playoffs vs in the beginning of the season? What factors maybe influencing that?
+7) Player standouts. Are there certain players that provide a statistically significant advantage to a teams ability to win or go to the playoffs?
+
+# Approach
+# Provide a concise explanation of how you plan to address this problem statement.
+
+Using historical data, i would like to find out what team stats correlate best with team wins and what stats correlate best with team losses. Using this information, i would like to break down each team with the best winning percentages and examine the individual player statistic to determine if there are specific factors that these players are doing or not doing to affect the outcome of the game. Reviewing this data, i would to compare teams with higher salaries to see how this influences the winning and losing percentages. Finally review the injury data to determine how this influences the winning and losing percentages. 
+
+# How your approach addresses (fully or partially) the problem.
+
+By looking at the specific team members statistical contributions to winning or losing, and team statistics that contribute to winning and losing, and how these statistics correlate through out the season, I hope to determine what predictors can be used to determine which teams have the best chance of making to the playoffs in the 2024 season. 
+
+# Data  (Minimum of 3 Datasets - but no requirement on number of fields or rows)
+# Original source where the data was obtained is cited and, if possible, hyperlinked.
+Source data is thoroughly explained (i.e. what was the original purpose of the data, when was it collected, how many variables did the original have, explain any peculiarities of the source data such as how missing values are recorded, or how data was imputed, etc.).
+
+This is what i am working with now. I am still looking for more or better datasets. Player salary for example does not have current data. These tables were obtained from https://www.kaggle.com/datasets. 
+
+data/NBA/NBA Player Injury Stats(1951 - 2023) - contains 6 variables highlighting player injuries and team played for from 1951 to 2023. This dataset was pulled from Pro Sports Transactions to curate a dataset for all IL moves since 1951 and was updated 24 hours ago. I can use this data to examine injuries by team and compare to winning and losing percentages to determing the impact the injuries had on the team. 
+
+data/NBA/nba_data_processed - contains individual player performance stats throughout their career. the original purpose of this data was to extract NBA stats using scraping techniques to perform data analysis and visualizations using python. I may be able to use this data to compare players on winning teams with losing teams to see what stats might be better predictors. This dataset contains over 30 variables and was updated a couple months ago. 
+
+data/NBA/nba_game_scores - This is a particularly important data set that I got out of Kaggle. It contains data from each team for the past six season and can be used to predict game outcomes, visualize team performance, and compare home and away game performance. This data set contains 41 different variables and was updated one month ago. 
+
+data/NBA/nba_playoffs & data/NBA/nba_games - These datasets provide data to conduct analysis and insight to the 2021 and 2122 regular season. They include game stats such as points scored, field goal percentages, free throw percentages and more. These will help understand out prediction models can be formed from basketball statistics and help prepare my predictions for the 2024 season. This dataset was updated 30 days ago. 
+
+data/NBA/NBA_season1718_salary - This dataset is a bit outdated, so i am trying to find more current data. it was scraped from basketball reference and only includes information about the player names, team and salary amount. I can use this information to mash up with basketball stats during the 2017 and 2018 season and see if salary information would be useful in determining win / loss percentages.
+
+# Required Packages
+# Identify the packages that are needed for your project.
+
+There maybe more, as i start to dive deeper into the model nd perform more research. 
+library(ggplot2)
+library(tinytex)
+library(dplyr)
+library(qqplotr)
+library(tidyverse)
+library(pastecs)
+library(purrr)
+library(car)
+
+# Plots and Table Needs
+# What types of plots and tables will help you to illustrate the ﬁndings to your research questions?
+
+I will be running scatter plots, box whisker charts and histograms for outliers and trends. Using the plot() and hist() function and regression models. 
+
+# Questions for future steps
+# What do you not know how to do right now that you need to learn to answer your research questions?
+
+This is a difficult question to answer. There will be a lot of research into this project and the deeper I dig, the more questions i will have. I need to develop my experience and understanding of regression models and the meaning behind the statistics. It was blitz for me the last couple weeks and i learned a lot, but i feel like there are lot of layers of the onion that still need to be pealed. 
+
+## 10.3 Final Project Step 2
+
+# Data importing and cleaning steps are explained in the text and follow a logical process.  Outline your data preparation and cleansing steps.
+
+```{r include=FALSE}
+getwd()
+setwd("C:/Users/bonertzb/OneDrive - Tyson Online/Desktop/DataScience 510/dsc520")
+plyr_injury <- read.csv("data/NBA/NBA Player Injury Stats(1951 - 2023).csv")
+plyr_stats_regular <- read.csv("data/NBA/2021-2022 NBA Player Stats - Regular.csv", header=TRUE, stringsAsFactors=FALSE)
+game_scores <- read.csv("data/NBA/nba_game_scores.csv")
+game_stats <- read.csv("data/NBA/nba_games.csv")
+library(readxl)
+team_stats <- read_excel("data/NBA/21-22_NBA_Team_Stats.xlsx")
+
+
+#will not use
+#plyr_stats <- read.csv("data/NBA/nba_data_processed.csv") - WILL NOT USE
+
+#Will Not Use
+#plyr_salary <- read.csv("data/NBA/NBA_season1718_salary.csv") - WIll Not Use
+
+nba_ply_injuryr_df <- data.frame(plyr_injury)
+nba_plyr_stats_df <- data.frame(plyr_stats_regular)
+nba_game_scores_df <- data.frame(game_scores)
+nba_game_stats_df <- data.frame(game_stats)
+nba_team_stats_df <- data.frame(team_stats)
+
+
+```
+
+I decided to scratch the "nba_data_processed" data set. After further review, I realized that the data was not applicable to my topic problem. This dataset contained all the stats of a player throughout their career. It did not contain the information by year where comparison of winning seasons could be conducted. I would be more interested in seeing how individual player stats contributed to winning or losing seasons. With this data, i have no way of telling if a players performance made a positive impact or not. Therefore, although the data was interesting, I felt i would not be able to use it in predicting next season outcomes. Instead i was able to locate a data set called "2021-2022 NBA Player Stats" for both games and playoffs for the 2021-2022 season. I can use this information to merge with the "nba_games" and "nba_playoff" datasets because they are all information from the 2021-2022 basketball season. 
+
+Also, i decided to remove the player salary dataset. This data set is from the 2017 - 2018 season and doesn't seem to be applicable to my problem statement. In addition, i decided to focus my study on regular season games and remove data from the playoffs. My problem statement is to examine team / player performance to see who would be likely to make the playoffs. This is better determined from regular season games and how players / teams performs throughout the regular season. 
+
+Finally, i revised my problem statement to do the prediction on the 2023 playoff season because the data is not yet available for the 2022-23 season. I will use the 2021-2022 data to see if i can predict the teams or explain the variables that gave the most influence on pushing the teams to the playoffs this year. 
+
+# Cleaning Steps:
+ 1) filter data in nba_game_scores to retain only the 2021 - 22 season
+ 
+```{r}
+nba_game_scores_df1 <- nba_game_scores_df[nba_game_scores_df$SEASON == '2021-22',]
+```
+ 
+ 2) split the date column in the player injury data frame then filter the year and month to get the 2021-22 season.
+ 
+```{r}
+library(stringr)
+nba_ply_injuryr_df[c('Year', 'Month', 'Day')] <- str_split_fixed(nba_ply_injuryr_df$Date, '-', 3)
+nba_ply_injuryr_df1 <- nba_ply_injuryr_df[nba_ply_injuryr_df$Year %in% c("2021", "2022"),]
+
+#combine year / month columns so i can filter with less than or greater than to isolate the 2021-22 season
+
+nba_ply_injuryr_df1$yrmo = paste(nba_ply_injuryr_df1$Year, nba_ply_injuryr_df1$Month, sep="")
+nba_ply_injuryr_df1$yrmo <- as.numeric(nba_ply_injuryr_df1$yrmo)
+
+nba_ply_in_df2 <- nba_ply_injuryr_df1[nba_ply_injuryr_df1$yrmo > '202107',]
+nba_ply_in_df3 <- nba_ply_in_df2[nba_ply_in_df2$yrmo < '202208',]
+```
+ 
+ 3) NBA Game Stats and NBA Player Stats did not need to be modified or cleaned at this point.
+ 
+ 4) I found a new data set called NBA Team Stats. This data set does not need to be cleaned at this piont either, but i find this data set will be particularly useful to view combined team performance and stats with the seasons wins and losses. This data was pulled from the following web site: https://www.nba.com/stats/teams/traditional?Season=2021-22&SeasonType=Regular%20Season&dir=A&sort=W
+
+# With a clean dataset, show what the final data set looks like. However, do not print off a data frame with 200+ rows; show me the data in the most condensed form possible.
+
+ I will be further exploring these data sets to combine or eliminate data as needed.
+
+```{r}
+head(nba_ply_in_df3)
+head(nba_game_scores_df1)
+head(nba_game_stats_df)
+head(nba_plyr_stats_df)
+head(nba_team_stats_df)
+```
+
+# What do you not know how to do right now that you need to learn to import and cleanup your dataset?
+
+ I don't know how to combine tables (append or merge tables together.) I am not sure if i need to do that or not, but when I get into seeing how these different datasets interact, i will need to at least pull columns from some data sets and merge them or create new columns within a new dataset. I have a pretty good idea how to transform, filter, and create columns, but it is something i need more practice with. 
+
+# Discuss how you plan to uncover new information in the data that is not self-evident.
+
+ As i dive deeper and deeper into the data, examining regression and the influence (positive or negative) certain variables have on teh outcome of the game, i think it will be easier to identify key information that is not self-evident at this point. Using linear and logistic regression and correlation will help me identify new information that may not be self-evident.
+
+# What are different ways you could look at this data to answer the questions you want to answer?
+
+I would like to plot the data in the scatter plot with team wins vs losses throughout the season. 
+Box / whisker with comparison of top 4 winning teams and bottom 4 loosing teams. 
+Regression looking at player stats of winning teams and loosing teams. 
+Linear regression plot and logistic regression plots of winners vs losers.
+
+# Do you plan to slice and dice the data in different ways, create new variables, or join separate data frames to create new summary information? Explain.
+
+Yes, I would like to create subsets of the top 4 winning teams and player performance, and bottom 4 losing teams with player performance. Also further dive into the injury report to see what kind of impact this has on each of these subsets.
+
+# How could you summarize your data to answer key questions?
+
+Hopefully determine how player performance impacts the winning teams and overall team stats will tell me how one can predict what teams have the stronger players with the skills in key areas to contribute to the win. I hope the comparison of these player and team stats of the winning team and losing teams subsets will help provide the detail needed to predict. I would like to see if players that contribute individually to each variable provides a more rounded team and thus a recipe for success. Or if players that have similar skills and contribute to the same player variables have a better chance for success. 
+
+# What types of plots and tables will help you to illustrate the findings to your questions? Ensure that all graph plots have axis titles, legend if necessary, scales are appropriate, appropriate geoms used, etc.).
+
+I hope the ask is not to provide the plots at this time as i am not prepared, but to answer the question: scatter plots, histograms, box / whisker, linear regression and logistic regression line plots will be used. 
+
+# What do you not know how to do right now that you need to learn to answer your questions?
+
+I am not an expert by any means, but all of the things we learned so far in the course i feel pretty comfortable with and at a minimum, able to research enough to provide the detail needed. 
+
+# Do you plan on incorporating any machine learning techniques to answer your research questions? Explain.
+
+Yes, our latest assignment by using a test subset to test the odds and train the program to my data will be used, and then comparing that information with the entire dataset. 
+
+
+# 11.3 Final Project Step 3
+
+# Introduction
+# Overall, write a coherent narrative that tells a story with the data as you complete this section.
+
+My project was set out to determine or develop a way to predict winning basketball teams based off the season stats of the 2021-2022 basketball regular season. In my research, I have found a large amount of information providing data and statistics regarding the subject ranging from very detailed player statistics to general win / loss data for teams. My initial intent was to examine each of these data sets in detail and weed out the few key statistics that drive winning success for the team. I found this is much easier said than done. Several of the data sets I found to be to general. Simple win or loss counts didn't help me narrow in on key performance metrics that lead to winning seasons. The player injury report was difficult to understand or to apply to team performance because the data didn't provide the length of time a player was out for an injury or if the player was able to play as a result of the injury. The best possible conclusion one could draw from that dataset was simply the amount of injuries each team had for the season and there was not a lot of correlation leading to how those injuries impacted the season. Individual player statistics I feel could have some value on predicting team performance, however this data set was very large and difficult to manipulate to find key variables in the amount of time provided. This is a data set that i would like to continue to explore to see what attributes separate really great players from average players. 
+
+The data set i found most useful was the NBA Team Statistics. This data set provides the right amount of detail and team stats along with winning and losing records for the 2021-2022 season. I performed linear regression on this data set to determine what variables had the smallest p-value which provided the most statistical significance to the winning response. Upon doing so, i realized PFD - personal fouls against, and STL - steals had a strong correlation with a winning outcome. Other variables were close (blocks, turnovers, personal fouls), but still did not seem to have the impact that the other two variables did. The r-squared value of the linear regression was really good at 96% when running all of the variables in my modified data set. However, when i tried to run the linear regression for only the W ~ STL + PFD, the r-squared value dropped significantly to around 20%. Therefore i decided to continue on with the model using all the previous variables. 
+
+After the linear regression model, i performed a prediction of wins in a new data frame "predicted_df". I then compared my predicted wins to actual wins using a side by side scatter plot. The results looked very close from a visual perspective, however i knew the residuals would give me more precise figures. Therefore, i calculated the residuals and did a cbind to include them to the same predicted_df data set. I then plotted the residuals with actual wins and with team names to identify some of the outliers in the prediction. 
+
+
+
+# The problem statement you addressed
+# Summarize the problem statement you addressed.
+
+The problem statement i addressed is: Can we predict winning NBA Basketball teams based on previous years statistics, and if so what variables or statistics would be most vital in predicting the most successful NBA Teams. 
+
+# How you addressed this problem statement
+# Summarize how you addressed this problem statement (the data used and the methodology employed, including a recommendation for a model that could be implemented).
+
+I performed linear regression of the nba team stats data frame with majority of the variables provided. The linear regression indicated statistical significance with steals and personal fouls against for the win response. The R-squared value was around 96% indicating that the wins could be explained by these variables. Next, I prediction to predict the wins and plotted my predicted wins against the actual wins. Then i calculated the residuals and included in my predicted data frame and plotted the residuals against actual wins to identify how well my prediction fit with the actual wins. This helped me to locate the teams with the highest and lowest residuals and also helped to identify the teams that matched with the prediction.
+
+My recommendation would be to further explore the individual player stats. I would like to correlate the players with the most steals average and lowest personal fouls to the team they play on. Then, compare these player teams with the teams that have the most and least wins to see if the individual player statistics correlate to wins or losses. This would further validate if the two variables identified in the linear regression (Steals and Personal Fouls Against) play a significant role in a teams ability to win. 
+
+# Analysis
+# Summarize the interesting insights that your analysis provided. 
+
+```{r}
+library(ggplot2)
+library(tinytex)
+library(dplyr)
+library(qqplotr)
+library(tidyverse)
+library(pastecs)
+library(purrr)
+library(car)
+
+#Run a linear regression model to see what attributes affect the winning column of the nba_team_stats dataframe
+
+team_stat_lr <- lm(W ~ PTS + FGM + FGA + FG. + X3PM + X3PA + X3P. + FTM + FTA + FT. + OREB + DREB + REB + AST + TOV + STL + BLK + BLKA + PF + PFD, data = nba_team_stats_df)
+
+summary(team_stat_lr)
+
+```
+
+View of the summary indicate some variable reveal a significant association with winning with lower P-values in the variables FTA - Free Throw Attempts, STL - Steals, and PFD - Personal Fouls Against. The R squared value of 0.9678 indicates that 96% of the wins can be explained by these 3 predictors. FTA - Free Throw Attempts coincide with PFD - Personal Fouls Against. The more you are fouled, the more free throw attempts you can accumulate. However PFD and STL appear to be the only variables that are statistically significant.
+
+
+```{r}
+# Predictive dataframe
+
+predicted_df <- data.frame(
+  Predicted_Win = predict(team_stat_lr, nba_team_stats_df), Actual_wins=nba_team_stats_df$W, Teams=nba_team_stats_df$TEAM,
+  PFD=nba_team_stats_df$PFD, STL=nba_team_stats_df$STL)
+
+predicted_df
+```
+
+
+
+```{r}
+# Chart comparison of predicted wins vs actual wins.
+
+Predicted_Wins <- c(predicted_df$Predicted_Win)
+Actual_Wins <- c(predicted_df$Actual_wins)
+
+par(mfrow = c(1,2))
+
+plot(Predicted_Wins, col="red")
+plot(Actual_Wins, col="blue")
+
+```
+
+
+```{r}
+# Calculate the Residuals
+
+residuals <- nba_team_stats_df$W - predicted_df$Predicted_Win
+
+residuals
+```
+
+```{r}
+# add residuals to the predicted data.frame
+
+predictdf_new <- cbind(predicted_df, residuals)
+
+predictdf_new
+```
+
+```{r}
+predict_plot <- ggplot(predictdf_new, aes(x = Actual_wins, y = residuals)) + geom_point() + geom_smooth(method="lm") + labs(x = "Actual Wins", y = "Residuals")
+
+predict_plot
+```
+
+```{r}
+# Add Team labels
+
+library(ggrepel)
+
+nba_teams <- predictdf_new %>% arrange(desc(abs(residuals))) %>% head(10)
+
+predictplot_teamnames <- predict_plot + geom_point(data=nba_teams) + geom_text_repel(data=nba_teams, aes(label=paste(Teams)))
+
+predictplot_teamnames
+
+```
+
+
+# Implecations
+# Summarize the implications to the consumer (target audience) of your analysis. 
+
+This implications of my analysis looks promising. Taking season stats and using linear regression, we are able to predict team wins with majority of teams falling within +/- 2 of the residual and several within +/- 1. The furthest positive residual was the Detroit Pistons where a season with only 19 wins were predicted when the actual wins were 23. The team with most negative residual was the Portland Trail Blazers where 31 wins were predicted and the team had and actual of 27 wins. 12 of the 30 teams had predicted wins within 1 win of the actual. 
+
+# Limitations
+# Discuss the limitations of your analysis and how you, or someone else, could improve or build on it.
+
+I would say the biggest limitation to my analysis is that i was not able to really narrow down to a few key statistics that affect the outcome of the season wins. We have seen that Steals and Personal Fouls Against seem to have a significant correlation, but i think we need to drill deeper into the data. With this analysis we have been able to validate the prediction analysis, but i don't know if this can be used to pick the best teams for the following year. 
+
+How I or someone else can improve this analysis is to look at the individual player stats. I feel there have to be certain key attributes in individual player stats that lead to winning outcomes, and if we are able to identify what those attributes are, one could theoretically build a team or match the team with players that possess these attributes, one could better predict season outcomes.  
+
+# Concludting Remarks
+
+In conclusion, i am sure i am not the first person to try to use season statistics and data science to predict winning teams, but this is a process that i always wondered how it was done. Getting an opportunity to use R to explore the data was eye opening. Just with the few weeks of research and analysis revealed so much insight, that i wanted to get into other data sets and keep going and continue exploring. And its just the beginning. I feel i have just scratched the surface of how much potential data science could have. So i am excited.
+
+I am really happy with what i have learned throughout this course and i am eager to put these skills to the test in my profession. I feel i have been looking at the same data sets for the past 10 plus years, but i am seeing them differently now. This is probably not the conclusion you are looking for. I think i explained as much as i could above, so with this conclusion, i am tipping the had to this class and my achievement in it. I value what i have learned and am eager to further my knowledge and understanding of this program. 
