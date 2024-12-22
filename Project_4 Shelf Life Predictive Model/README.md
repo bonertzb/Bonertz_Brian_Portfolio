@@ -1,31 +1,31 @@
-## Shelf life Predictive Model
+# Shelf life Predictive Model
 
-# Overview
+## Overview
 
 1.	To analyze the dataset to identify key factors affecting the shelf life of food products
 2.	To develop a predictive model that can estimate the shelf life based on the identified factors    
 3.	To validate the model’s accuracy and reliability in predicting product condition 
 
-# Features
+## Features
 
 This data is sourced from in house data collection throughout the 2023 calendar year through an electronic data collection system. The is pulled using an approved API and loaded in CSV format and stored in a shared folder. The dataset consists of 7,495 records with 17 features related to product details, production and sample dates, quality indicators, and conditions affecting shelf life.
 
 Variables:
-Record Number -> Unique identifier  -> int
-Date / Time -> Date and time the record was entered -> date / time
-Location -> Location of meat production and sample collection -> categorical
-Type -> Type of muscle cut 'Bone In' or 'Boneless' -> categorical
-Product -> Product type of the muscle cut sampled -> categorical
-Production_Date -> Date of meat production - date
-Sample_Date -> Date of shelf life sample - date
-Age -> Age of product at time of sample - int
-TPC_Value -> TPC Micro result in LOG - int
-Packaging_Condition -> Condition of packaging at time of sample -> categorical
-Purge -> Grade of Purge in packaging at time of sample -> categorical
-Odor -> Grade of odor at time of sample -> categorical
-Color -> Grade of coor at time of sample -> categorical 
-Surface -> Grade of surface texture at time of sample - categorical 
-Product_condition -> Overall assessment of product at the time of sample - categorical 
+1) Record Number -> Unique identifier  -> int
+2) Date / Time -> Date and time the record was entered -> date / time
+3) Location -> Location of meat production and sample collection -> categorical
+4) Type -> Type of muscle cut 'Bone In' or 'Boneless' -> categorical
+5) Product -> Product type of the muscle cut sampled -> categorical
+6) Production_Date -> Date of meat production - date
+7) Sample_Date -> Date of shelf life sample - date
+8) Age -> Age of product at time of sample - int
+9) TPC_Value -> TPC Micro result in LOG - int
+10) Packaging_Condition -> Condition of packaging at time of sample -> categorical
+11) Purge -> Grade of Purge in packaging at time of sample -> categorical
+12) Odor -> Grade of odor at time of sample -> categorical
+13) Color -> Grade of coor at time of sample -> categorical 
+14) Surface -> Grade of surface texture at time of sample - categorical 
+15) Product_condition -> Overall assessment of product at the time of sample - categorical 
 
 ## Method
 
