@@ -39,15 +39,15 @@ Product_condition -> Overall assessment of product at the time of sample - categ
 
 **Model Selection**
 Log regression and SVC models were found to have the highest accuracy rating with each model performing exceptionally well
-	•	Logistic Regression - 0.96
-	•	SVC Model - 0.97
+A) Logistic Regression - 0.96
+B) SVC Model - 0.97
 
 **Model Train / Test**
 	•	Decision boundary is used on the SVC Model to plot TPC values and Age by target Product Condition
  	•	ROC Curve for LOG Regression displays the percentage of true positives predicted by the model with an AUC = 0.99
 
   **Interpretation of Results**
-  	•	High Accuracy: Both the logistic regression and SVC Models were able to predict with high accuracy. Each model achieves above 95% accuracy indicating effective classification of data correctly most of the time
-   •	Good Precision and Recall: Both models present high precision and high recall scores. High precision relates to the low false positive rate, and high recall relates to the low false negative rate
-  •	Balance: Both metrics are above 95% for each model used, showing that the models are well-balanced in identifying both positive and negative classes
+  -> High Accuracy: Both the logistic regression and SVC Models were able to predict with high accuracy. Each model achieves above 95% accuracy indicating effective classification of data correctly most of the time
+  ->Good Precision and Recall: Both models present high precision and high recall scores. High precision relates to the low false positive rate, and high recall relates to the low false negative rate
+  ->Balance: Both metrics are above 95% for each model used, showing that the models are well-balanced in identifying both positive and negative classes
 
